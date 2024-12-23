@@ -2,6 +2,7 @@ import subprocess
 import os
 import time
 
+
 username = os.environ["HOME"].split("/")[-1] # usually the last item is the username so grab it. This assumes linux, since flatpak runs on linux only.
 
 print(username) # debug
@@ -30,3 +31,12 @@ def waitForFiles():
         time.sleep(1) # sleep for a second to prevent excessive assignment of variables
 
 print("Initializing...")
+
+
+# TODO: async
+def waitForPhone():
+    try:
+        subprocess.run(['adb', 'pull', '/sdcard/flatpaktransfer', f'/home/{username}/.flatpaktransfer'])
+    except Exception as e:
+        print(e) # it might be very bad so print just in case
+    time.sleep(60) # sleep for a minute to wait for the phone to be connected
