@@ -30,4 +30,3 @@ def waitForFiles():
         time.sleep(1) # sleep for a second to prevent excessive assignment of variables
 
 print("Initializing...")
-
