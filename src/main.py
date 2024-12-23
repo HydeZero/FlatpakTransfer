@@ -20,23 +20,25 @@ except:
 
 current_files = os.listdir(f"/home/{username}/.flatpaktransfer") # initial setting of current files
 
-def waitForFiles():
-    while True:
-        prev_files = current_files
-        current_files = os.listdir(f"/home/{username}/.flatpaktransfer")
-        for file in current_files:
-            if file not in prev_files:
-                if file.split(".")[-1] == "flatpakref": # detect if it is a flatpakref file
-                    installApp(f"/home/{username}/.flatpaktransfer/{file}") # Absolute directory to allow running program in any pwd
-        time.sleep(1) # sleep for a second to prevent excessive assignment of variables
+def checkForFiles():
+    prev_files = current_files
+    current_files = os.listdir(f"/home/{username}/.flatpaktransfer")
+    for file in current_files:
+        if file not in prev_files:
+            if file.split(".")[-1] == "flatpakref": # detect if it is a flatpakref file
+                installApp(f"/home/{username}/.flatpaktransfer/{file}") # Absolute directory to allow running program in any pwd
 
 print("Initializing...")
 
-
-# TODO: async
 def waitForPhone():
-    try:
-        subprocess.run(['adb', 'pull', '/sdcard/flatpaktransfer', f'/home/{username}/.flatpaktransfer'])
-    except Exception as e:
-        print(e) # it might be very bad so print just in case
-    time.sleep(60) # sleep for a minute to wait for the phone to be connected
+    while True:
+        try:
+            subprocess.run(['adb', 'pull', '/sdcard/flatpaktransfer', f'/home/{username}/.flatpaktransfer'])
+        except Exception as e:
+            print(e) # it might be very bad so print just in case
+            continue
+        time.sleep(10) # should give this enough time to pull
+        checkForFiles()
+        time.sleep(30) # sleep for 30 seconds to wait for the phone to be connected
+
+waitForPhone()
